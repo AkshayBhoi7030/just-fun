@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Damini ⚡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-night-deep:#0f1226;
+    --bg-night-mid:#1d2255;
+    --bolt-gold:#ffd23f;
+    --bolt-gold-soft:#f4c95d;
+    --text-cloud:#e9e6f5;
+    --text-cloud-dim:rgba(233,230,245,.78);
+    --warm-navy:#241536;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    height:100%;
+    width:100%;
+    overflow:hidden;
+    font-family:'Manrope',sans-serif;
+    color:var(--text-cloud);
+  }
+
+  /* ---------- background skies ---------- */
+  .sky{position:fixed;inset:0;z-index:-2;transition:opacity 1.8s ease;}
+  .sky-night{
+    background:
+      radial-gradient(ellipse 60% 40% at 30% 15%, rgba(255,255,255,.06), transparent 60%),
+      linear-gradient(180deg, var(--bg-night-deep) 0%, var(--bg-night-mid) 100%);
+  }
+  .sky-dawn{
+    opacity:0;
+    background:linear-gradient(180deg, #2b1650 0%, #6a2f6b 32%, #d9557a 62%, #ffb86b 100%);
+  }
+
+  #starField{position:fixed;inset:0;z-index:-1;pointer-events:none;}
+  .star{position:absolute;background:#fff;border-radius:50%;}
+
+  .bolt-deco{position:fixed;color:var(--bolt-gold-soft);opacity:.16;z-index:-1;pointer-events:none;}
+  .bolt-deco.tl{top:6%;left:5%;width:90px;height:90px;transform:rotate(-18deg);}
+  .bolt-deco.br{bottom:8%;right:6%;width:110px;height:110px;transform:rotate(12deg);}
+
+  @media (prefers-reduced-motion: no-preference){
+    .star{animation:twinkle var(--dur,3s) ease-in-out infinite;}
+    .bolt-deco{animation:flash 6s ease-in-out infinite;}
+    .bolt-deco.br{animation-delay:2.4s;}
+  }
+  @keyframes twinkle{0%,100%{opacity:var(--min,.2);}50%{opacity:var(--max,.9);}}
+  @keyframes flash{0%,88%,100%{opacity:.14;}90%{opacity:.4;}92%{opacity:.14;}}
+
+  /* ---------- layout ---------- */
+  .stage{
+    position:relative;
+    height:100%;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+
+  .card{
+    position:relative;
+    max-width:460px;
+    width:100%;
+    padding:48px 40px;
+    border-radius:28px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.13);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    box-shadow:0 30px 80px -20px rgba(0,0,0,.5);
+    text-align:center;
+  }
+
+  @media (prefers-reduced-motion: no-preference){
+    .card{animation:riseIn .9s cubic-bezier(.2,.8,.2,1) both;}
+  }
+  @keyframes riseIn{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    font-weight:700;
+    color:var(--bolt-gold-soft);
+    opacity:.85;
+    margin:0 0 18px;
+  }
+
+  h1{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:44px;
+    line-height:1.1;
+    margin:0 0 22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+  }
+  h1 svg{width:.75em;height:.75em;color:var(--bolt-gold);flex-shrink:0;}
+
+  p.msg{
+    font-size:16px;
+    line-height:1.7;
+    color:var(--text-cloud-dim);
+    margin:0 0 26px;
+  }
+
+  p.question{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:22px;
+    line-height:1.4;
+    margin:0 0 34px;
+    color:var(--text-cloud);
+  }
+  p.question .hl{color:var(--bolt-gold);}
+
+  .button-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    flex-wrap:wrap;
+    min-height:56px;
+  }
+
+  button{
+    font-family:'Manrope',sans-serif;
+    font-weight:700;
+    font-size:16px;
+    border-radius:999px;
+    padding:15px 28px;
+    cursor:pointer;
+    border:none;
+    transition:transform .25s cubic-bezier(.2,.8,.2,1), left .28s ease, top .28s ease, background .2s ease;
+  }
+  button:focus-visible{outline:2px solid var(--bolt-gold);outline-offset:3px;}
+
+  .btn-yes{
+    background:linear-gradient(135deg, var(--bolt-gold), #ffb86b);
+    color:var(--warm-navy);
+    box-shadow:0 8px 26px -6px rgba(255,210,63,.55);
+  }
+  .btn-yes:hover{transform:translateY(-2px) scale(1.03);}
+
+  .btn-no{
+    background:transparent;
+    color:var(--text-cloud);
+    border:1.5px solid rgba(255,255,255,.28);
+  }
+
+  /* ---------- celebration panel ---------- */
+  .panel.hidden{display:none;}
+  .sign{
+    margin-top:28px;
+    font-size:13px;
+    color:var(--text-cloud-dim);
+    font-style:italic;
+  }
+
+  .confetti-piece{
+    position:fixed;
+    top:-20px;
+    z-index:5;
+    pointer-events:none;
+    color:var(--bolt-gold);
+  }
+  @keyframes fall{
+    to{transform:translateY(110vh) rotate(var(--rot,360deg));opacity:0;}
+  }
+
+  @media (max-width:480px){
+    .card{padding:38px 26px;border-radius:22px;}
+    h1{font-size:34px;}
+    p.question{font-size:19px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="sky sky-night"></div>
+<div class="sky sky-dawn" id="skyDawn"></div>
+<div id="starField"></div>
+
+<svg class="bolt-deco tl" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 L3 14 H12 L11 22 L21 10 H12 L13 2 Z"/></svg>
+<svg class="bolt-deco br" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 L3 14 H12 L11 22 L21 10 H12 L13 2 Z"/></svg>
+
+<div class="stage">
+  <div class="card">
+
+    <!-- ===== ask state ===== -->
+    <div class="panel" id="askPanel">
+      <p class="eyebrow">ek dil ki baat, sirf tumhare liye</p>
+      <h1>Damini <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 L3 14 H12 L11 22 L21 10 H12 L13 2 Z"/></svg></h1>
+      <p class="msg">Jab bhi tum haaste ho na, poora kamra chamak jaata hai — bilkul tumhare naam jaisa. Duri chahe kitni bhi ho, bijli toh dur se bhi mehsoos hoti hai. Kaafi dino se ye baat dil mein le ke ghoom raha tha, ab bas keh hi deta hoon.</p>
+      <p class="question">Kya tum meri <span class="hl">girlfriend</span> banogi?</p>
+      <div class="button-row" id="buttonRow">
+        <button class="btn-yes" id="yesBtn">Haan, chalte hain! 💛</button>
+        <button class="btn-no" id="noBtn">Nahi</button>
+      </div>
+    </div>
+
+    <!-- ===== celebration state ===== -->
+    <div class="panel hidden" id="yesPanel">
+      <p class="eyebrow">yesss</p>
+      <h1>Best din! <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 L3 14 H12 L11 22 L21 10 H12 L13 2 Z"/></svg></h1>
+      <p class="msg">Tumne haan bol diya 🎉 Duri koi maayne nahi rakhti ab. Video call pe milte hain jald hi 💛</p>
+      <p class="sign">— Akshay</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- stars ----
+  const starField = document.getElementById('starField');
+  const starCount = 55;
+  for(let i=0;i<starCount;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = (Math.random()*2 + 1).toFixed(1);
+    s.style.width = size+'px';
+    s.style.height = size+'px';
+    s.style.top = (Math.random()*90+2)+'%';
+    s.style.left = (Math.random()*96+2)+'%';
+    s.style.setProperty('--dur', (2+Math.random()*3).toFixed(1)+'s');
+    s.style.setProperty('--min', (0.15+Math.random()*0.2).toFixed(2));
+    s.style.setProperty('--max', (0.6+Math.random()*0.4).toFixed(2));
+    s.style.opacity = reduceMotion ? 0.5 : '';
+    if(reduceMotion) s.style.animation = 'none';
+    starField.appendChild(s);
+  }
+
+  // ---- dodging No button ----
+  const noBtn = document.getElementById('noBtn');
+  const yesBtn = document.getElementById('yesBtn');
+  const noTexts = ["Nahi","Pakka?","Sochlo zara","Ek baar aur socho","Are you sure?","Nope","Last chance","Bas haan bol do 😄"];
+  let dodgeCount = 0;
+  let isFixed = false;
+
+  function moveNoButton(){
+    const rect = noBtn.getBoundingClientRect();
+    const margin = 16;
+    const maxX = Math.max(margin, window.innerWidth - rect.width - margin);
+    const maxY = Math.max(margin, window.innerHeight - rect.height - margin);
+    const newX = margin + Math.random()*(maxX-margin);
+    const newY = margin + Math.random()*(maxY-margin);
+
+    if(!isFixed){
+      noBtn.style.position = 'fixed';
+      isFixed = true;
+    }
+    noBtn.style.left = newX+'px';
+    noBtn.style.top = newY+'px';
+
+    dodgeCount++;
+    noBtn.textContent = noTexts[dodgeCount % noTexts.length];
+
+    const growth = Math.min(dodgeCount*0.035, 0.55);
+    yesBtn.style.transform = `scale(${1+growth})`;
+    const shrink = Math.max(1 - dodgeCount*0.03, 0.55);
+    noBtn.style.transform = `scale(${shrink})`;
+  }
+
+  noBtn.addEventListener('mouseenter', moveNoButton);
+  noBtn.addEventListener('focus', moveNoButton);
+  noBtn.addEventListener('touchstart', function(e){ e.preventDefault(); moveNoButton(); }, {passive:false});
+  noBtn.addEventListener('click', function(e){ e.preventDefault(); moveNoButton(); });
+
+  // ---- yes click ----
+  const skyDawn = document.getElementById('skyDawn');
+  const askPanel = document.getElementById('askPanel');
+  const yesPanel = document.getElementById('yesPanel');
+
+  yesBtn.addEventListener('click', function(){
+    skyDawn.style.opacity = '1';
+    askPanel.classList.add('hidden');
+    yesPanel.classList.remove('hidden');
+    burstConfetti();
+  });
+
+  function burstConfetti(){
+    const count = reduceMotion ? 0 : 28;
+    for(let i=0;i<count;i++){
+      const piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = (Math.random()*100)+'vw';
+      piece.style.fontSize = (12+Math.random()*14)+'px';
+      piece.style.setProperty('--rot', (Math.random()*720-360)+'deg');
+      piece.style.animation = `fall ${2+Math.random()*1.8}s ease-in forwards`;
+      piece.style.animationDelay = (Math.random()*0.6)+'s';
+      piece.textContent = Math.random() > 0.5 ? '⚡' : '💛';
+      document.body.appendChild(piece);
+      piece.addEventListener('animationend', () => piece.remove());
+    }
+  }
+</script>
+
+</body>
+</html>
